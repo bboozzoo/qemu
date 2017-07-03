@@ -32,6 +32,7 @@
 #include "exec/log.h"
 #include "exec/helper-proto.h"
 #include "qemu/atomic.h"
+#include "sysemu/sysemu.h"
 
 /* DEBUG defines, enable DEBUG_TLB_LOG to log to the CPU_LOG_MMU target */
 /* #define DEBUG_TLB */
@@ -874,7 +875,7 @@ tb_page_addr_t get_page_addr_code(CPUArchState *env, target_ulong addr)
          * we can't proceed further.
          */
         report_bad_exec(cpu, addr);
-        exit(1);
+        qemu_system_reset_request(SHUTDOWN_CAUSE_GUEST_RESET);
     }
     p = (void *)((uintptr_t)addr + env->tlb_table[mmu_idx][index].addend);
     return qemu_ram_addr_from_host_nofail(p);
